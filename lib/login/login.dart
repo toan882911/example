@@ -1,15 +1,33 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_test_textfield/login/model/user_login_succes.dart';
+import 'package:provider/provider.dart';
+
+import 'home.dart';
+import 'model/user.dart';
+import 'model/user_data.dart';
 class Login extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.deepPurple[900],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserData>.value(
+            value: UserData(),
+        ),
+        ChangeNotifierProvider<UserLogin>.value(
+          value: UserLogin(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Colors.deepPurple[900],
+        ),
+        home: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -20,186 +38,241 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 class _MyHomePageState extends State<MyHomePage> {
+  //region form
   bool _obscureText = true;
-  bool check = true;
+  bool _checkLogin = false;
+  List<String> error = [];
+  List<String> errorLogin = [];
+  String user;
+  String pass;
+  //endregion
+
+  GlobalKey<FormState> _keyForm = GlobalKey();
+
   void hideShowPass(){
     setState(() {
       _obscureText = !_obscureText;
     });
   }
 
+  //Return list widget Error info
+  List<Widget> getErrorWidgets() {
+    List<Widget> errors = [];
+    error.forEach((value){
+      errors.add(Text(value));
+    });
+    errorLogin.forEach((value){
+      errors.add(Text(value));
+    });
+    return errors;
+  }
+
+  void checkLogin(context){
+    errorLogin.clear();
+    UserData userModel = Provider.of<UserData>(context);
+    UserLogin userLogin = Provider.of<UserLogin>(context);
+    List<User> _listUser = userModel.getUser;
+    _listUser.forEach((value){
+      if(value.name == user && value.pass == pass){
+        setState(() {
+          _checkLogin = true;
+        });
+      }
+    });
+    if(_checkLogin){
+      userLogin.addUser(new User(user,'18/11/1997','Thai Nguyen',pass));
+      Navigator.of(context).push(MaterialPageRoute( builder: (context){
+        return Home();
+      }));
+    } else {
+      setState(() {
+        errorLogin.add('Tài khoản hoặc mật khẩu sai');
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
+          key: _keyForm,
           child: Column(
             children: <Widget>[
               Container(
-                height: 200.0,
-                child: Container(
-                  child: Center(
-                    child: Image.asset(
-                      'asset/logo-sunshine.png',
-                      width: 200.0,
-                      height: 30.0,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
+                height: 240.0,
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'asset/logo-sunshine.png',
+                  width: 200.0,
+                  height: 30.0,
+                  fit: BoxFit.fill,
                 ),
               ),
               Container(
-                height: 100,
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(width: 1.0 ,color: Colors.white),
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                    width: 0.5,
+                margin: EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(width: 1.0 ,color: Colors.white),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                width: 0.5,
+                                color: Colors.grey[400],
+                              )
+                          )
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Icon(
+                              Icons.account_circle,
+                              color: Colors.black,
+                              size: 24,
+                            ),
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.only(left: 4.0),
+                                  hintText: 'Tên truy cập',
+                                  hintStyle: TextStyle(
                                     color: Colors.grey[400],
                                   )
-                              )
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Icon(
-                                  Icons.account_circle,
-                                  color: Colors.black,
-                                ),
                               ),
-                              Expanded(
-                                flex: 9,
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.only(left: 4.0),
-                                      hintText: 'Tên truy cập',
-                                      hintStyle: TextStyle(
-                                        color: Colors.grey[400],
-                                      )
-                                  ),
-                                ),
-                              ),
-                            ],
+                              validator: (value) {
+                                if (!value.contains(
+                                    new RegExp(r'[A-Za-z0-9]'))
+                                    && value.isEmpty ) {
+                                  error.add('Tên đăng nhập chỉ bao gồm chữ và so');
+                                  return null;
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onSaved: (value){
+                                user = value;
+                              },
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Icon(
-                                  Icons.lock,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 8,
-                                child: TextFormField(
-                                  keyboardType: TextInputType.visiblePassword,
-                                  obscureText: _obscureText,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.only(left: 4.0),
-                                    hintText: 'Mật khẩu',
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey[400],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: IconButton(
-                                  padding: EdgeInsets.only(right: 4.0),
-                                  icon: Icon(Icons.remove_red_eye),
-                                  onPressed: (){
-                                    hideShowPass();
-                                  },
-                                ),
-                              )
-                            ],
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: Icon(
+                              Icons.lock,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
+                          Expanded(
+                            child: TextFormField(
+                              keyboardType: TextInputType.visiblePassword,
+                              obscureText: _obscureText,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.only(left: 4.0),
+                                hintText: 'Mật khẩu',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey[400],
+                                ),
+                              ),
+                              validator: (value){
+                                if(value.isEmpty){
+                                  error.add('Mật khẩu hông được để trống');
+                                  return null;
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onSaved: (value){
+                                pass = value;
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            padding: EdgeInsets.only(right: 4.0),
+                            icon: Icon(Icons.remove_red_eye),
+                            onPressed: (){
+                              hideShowPass();
+                            },
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
               Expanded(
-                flex: 5,
-                child: Padding(
+                child: Container(
                   padding: EdgeInsets.only(top: 16.0),
                   child: Column(
                     children: <Widget>[
-                      check ? Container(
+                      error.isNotEmpty || errorLogin.isNotEmpty ? Container(
                         height: 52.0,
                         margin: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
                         decoration: BoxDecoration(
-                          color: Colors.yellowAccent[100],
-                          borderRadius: BorderRadius.all(Radius.circular(8.0))
+                            color: Colors.yellowAccent[100],
+                            borderRadius: BorderRadius.all(Radius.circular(8.0))
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Expanded(
-                              flex: 1,
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Icon(
                                 Icons.error_outline,
                                 color: Colors.red,
                               ),
                             ),
                             Expanded(
-                              flex: 6,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text('Tên đăng nhập chỉ bao gồm chữ và số.'),
-                                  Text('Mật khẩu không được để trống'),
-                                ],
+                                children: getErrorWidgets(),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ) : Container(),
                       FlatButton(
                         onPressed: (){
+                          error.clear();
+                          _keyForm.currentState.validate();
+                          if (error.isEmpty) {
+                            _keyForm.currentState.save();
+                            checkLogin(context);
+                            //TODO: Request API
+                          } else {
+                            setState((){});
+                          }
                         },
                         child: Container(
+                          alignment: Alignment.center,
                           width: MediaQuery.of(context).size.width,
                           height: 48.0,
                           decoration: BoxDecoration(
                             color: Colors.blueAccent,
                             borderRadius: BorderRadius.all(Radius.circular(8.0)),
                           ),
-                          child: Center(
-                            child: Text(
-                              'Đăng nhập',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                              ),
+                          child: Text(
+                            'Đăng nhập',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
                             ),
                           ),
                         ),
@@ -211,7 +284,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ),
     );
   }
 }

@@ -37,6 +37,7 @@ class DemoCounterConsumer extends StatelessWidget {
       borderRadius: BorderRadiusDirectional.all(Radius.circular(8)));
   @override
   Widget build(BuildContext context) {
+    print('render home');
     return Scaffold(
       appBar: AppBar(
         title: Text('abc'),
