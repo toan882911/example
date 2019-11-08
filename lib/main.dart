@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'animation/fade_transition.dart';
 import 'login/login.dart';
-import 'provider/demo_provider.dart';
 
-void main() => runApp(Login());
+void main() => runApp(MyFadeIn());
 
 
 
