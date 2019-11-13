@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test_textfield/bloc/user_bloc.dart';
 import 'package:provider/provider.dart';
 import 'form.dart';
 import 'model/user.dart';
 import 'model/user_login_succes.dart';
 
 class Home extends StatelessWidget {
-  String name,birth,address;
+
   @override
   Widget build(BuildContext context) {
-    UserLogin userLogin = Provider.of<UserLogin>(context);
-    userLogin.getUserLogin.forEach((value){
-      name = value.name;
-      birth = value.birth;
-      address = value.address;
-    });
+    UserBloc userBloc = Provider.of(context);
+    Widget detailUser(Widget detail1,Widget detail2){
+      return Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: detail1,
+            ),
+            Expanded(
+              child: detail2,
+            ),
+          ],
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
@@ -30,44 +41,17 @@ class Home extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text('Username : '),
-                      ),
-                      Expanded(
-                        child: Text(name),
-                      ),
-                    ],
-                  ),
+                detailUser(
+                  Text('Username : '),
+                  Text(userBloc.userInfo?.name),
                 ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text('Birth Day : '),
-                      ),
-                      Expanded(
-                        child: Text(birth),
-                      ),
-                    ],
-                  ),
+                detailUser(
+                  Text('Birth Day : '),
+                  Text(userBloc.userInfo?.birth),
                 ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text('Address : '),
-                      ),
-                      Expanded(
-                        child: Text(address),
-                      ),
-                    ],
-                  ),
+                detailUser(
+                  Text('Address : '),
+                  Text(userBloc.userInfo?.address),
                 ),
                 Expanded(
                   child: Container(
@@ -88,11 +72,7 @@ class Home extends StatelessWidget {
                       onPressed: (){
                         Navigator.of(context).push<User>(MaterialPageRoute( builder: (context){
                           return FormPage();
-                        })).then((value){
-                          if(value != null){
-                            userLogin.addUser(value);
-                          }
-                        });
+                        }));
                       },
                     ),
                   ),
@@ -105,3 +85,4 @@ class Home extends StatelessWidget {
     );
   }
 }
+

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_test_textfield/bloc/user_bloc.dart';
 import 'package:flutter_test_textfield/login/model/user_login_succes.dart';
 import 'package:provider/provider.dart';
 
@@ -13,11 +14,8 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<UserData>.value(
-            value: UserData(),
-        ),
-        ChangeNotifierProvider<UserLogin>.value(
-          value: UserLogin(),
+        ChangeNotifierProvider<UserBloc>.value(
+          value: UserBloc(),
         ),
       ],
       child: MaterialApp(
@@ -31,23 +29,25 @@ class Login extends StatelessWidget {
     );
   }
 }
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
+
 class _MyHomePageState extends State<MyHomePage> {
+  GlobalKey<FormState> _keyForm = GlobalKey();
+  UserBloc userBloc;
+
   //region form
   bool _obscureText = true;
-  bool _checkLogin = false;
   List<String> error = [];
   List<String> errorLogin = [];
   String user;
   String pass;
-  //endregion
-
-  GlobalKey<FormState> _keyForm = GlobalKey();
+  //endregion”
 
   void hideShowPass(){
     setState(() {
@@ -69,18 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void checkLogin(context){
     errorLogin.clear();
-    UserData userModel = Provider.of<UserData>(context);
-    UserLogin userLogin = Provider.of<UserLogin>(context);
-    List<User> _listUser = userModel.getUser;
-    _listUser.forEach((value){
-      if(value.name == user && value.pass == pass){
-        setState(() {
-          _checkLogin = true;
-        });
-      }
-    });
-    if(_checkLogin){
-      userLogin.addUser(new User(user,'18/11/1997','Thai Nguyen',pass));
+    if(user == "toan" && pass == "12345"){
+      userBloc.setCurrentUser(User('toan', '11/11/1999', 'HN', ''));
       Navigator.of(context).push(MaterialPageRoute( builder: (context){
         return Home();
       }));
@@ -90,134 +80,141 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userBloc = Provider.of(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
           key: _keyForm,
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: 240.0,
-                alignment: Alignment.center,
-                child: Image.asset(
-                  'asset/logo-sunshine.png',
-                  width: 200.0,
-                  height: 30.0,
-                  fit: BoxFit.fill,
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 240.0,
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'asset/logo-sunshine.png',
+                    width: 200.0,
+                    height: 30.0,
+                    fit: BoxFit.fill,
+                  ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(width: 1.0 ,color: Colors.white),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(
-                                width: 0.5,
-                                color: Colors.grey[400],
-                              )
-                          )
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Icon(
-                              Icons.account_circle,
-                              color: Colors.black,
-                              size: 24,
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(width: 1.0 ,color: Colors.white),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                  width: 0.5,
+                                  color: Colors.grey[400],
+                                )
+                            )
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Icon(
+                                Icons.account_circle,
+                                color: Colors.black,
+                                size: 24,
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              decoration: InputDecoration(
+                            Expanded(
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(left: 4.0),
+                                    hintText: 'Tên truy cập',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey[400],
+                                    )
+                                ),
+                                validator: (value) {
+                                  if (!value.contains(
+                                      new RegExp(r'[A-Za-z0-9]'))
+                                      && value.isEmpty ) {
+                                    error.add('Tên đăng nhập chỉ bao gồm chữ và so');
+                                    return null;
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value){
+                                  user = value;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Icon(
+                                Icons.lock,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Expanded(
+                              child: TextFormField(
+                                keyboardType: TextInputType.visiblePassword,
+                                obscureText: _obscureText,
+                                decoration: InputDecoration(
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.only(left: 4.0),
-                                  hintText: 'Tên truy cập',
+                                  hintText: 'Mật khẩu',
                                   hintStyle: TextStyle(
                                     color: Colors.grey[400],
-                                  )
-                              ),
-                              validator: (value) {
-                                if (!value.contains(
-                                    new RegExp(r'[A-Za-z0-9]'))
-                                    && value.isEmpty ) {
-                                  error.add('Tên đăng nhập chỉ bao gồm chữ và so');
-                                  return null;
-                                } else {
-                                  return null;
-                                }
-                              },
-                              onSaved: (value){
-                                user = value;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Icon(
-                              Icons.lock,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              keyboardType: TextInputType.visiblePassword,
-                              obscureText: _obscureText,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.only(left: 4.0),
-                                hintText: 'Mật khẩu',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[400],
+                                  ),
                                 ),
+                                validator: (value){
+                                  if(value.isEmpty){
+                                    error.add('Mật khẩu hông được để trống');
+                                    return null;
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value){
+                                  pass = value;
+                                },
                               ),
-                              validator: (value){
-                                if(value.isEmpty){
-                                  error.add('Mật khẩu hông được để trống');
-                                  return null;
-                                } else {
-                                  return null;
-                                }
-                              },
-                              onSaved: (value){
-                                pass = value;
-                              },
                             ),
-                          ),
-                          IconButton(
-                            padding: EdgeInsets.only(right: 4.0),
-                            icon: Icon(Icons.remove_red_eye),
-                            onPressed: (){
-                              hideShowPass();
-                            },
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                            IconButton(
+                              padding: EdgeInsets.only(right: 4.0),
+                              icon: Icon(Icons.remove_red_eye),
+                              onPressed: (){
+                                hideShowPass();
+                              },
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Container(
+                Container(
                   padding: EdgeInsets.only(top: 16.0),
                   child: Column(
                     children: <Widget>[
@@ -280,8 +277,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-              )
-            ],
+              ],
+            ),
           ),
         ),
     );

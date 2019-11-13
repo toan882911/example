@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test_textfield/bloc/user_bloc.dart';
 import 'package:provider/provider.dart';
 import 'model/user.dart';
 import 'model/user_login_succes.dart';
@@ -11,142 +12,141 @@ class _FormState extends State<FormPage> {
   String name,birth,address,pass;
   GlobalKey<FormState> _globalKey = new GlobalKey();
 
+  UserBloc userBloc;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userBloc = Provider.of(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    UserLogin userLogin = Provider.of<UserLogin>(context);
+    Widget detailUser(Widget detail1,Widget detail2){
+      return Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: detail1,
+            ),
+            Expanded(
+              child: detail2,
+            ),
+          ],
+        ),
+      );
+    }
     List<Widget> widgets = [];
-    userLogin.getUserLogin.forEach((value){
-      widgets.add(Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Text('Username : '),
-              ),
-              Expanded(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                  ),
-                  validator: (value){
-                    if(value.isEmpty){
-                      return 'Không được để trống';
-                    } else {
-                      return null;
-                    }
-                  },
-                  onSaved: (value){
-                    name = value;
-                  },
-                  onChanged: (value){
-                    name = value;
-                  },
-                  initialValue: value.name,
-                ),
-              ),
-            ],
-          ),
-        ),);
-      widgets.add(Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Text('Birth Day : '),
+    User value = userBloc.userInfo;
+    widgets.add(
+        detailUser(
+          Text('Username : '),
+          TextFormField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              errorBorder: InputBorder.none,
             ),
-            Expanded(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                ),
-                validator: (value){
-                  if(value.isEmpty){
-                    return 'Không được để trống';
-                  } else {
-                    return null;
-                  }
-                },
-                onSaved: (value){
-                  birth = value;
-                },
-                onChanged: (value){
-                  birth = value;
-                },
-                initialValue: value.birth,
-              ),
-            ),
-          ],
-        ),
-      ),);
-      widgets.add( Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Text('Address : '),
-            ),
-            Expanded(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                ),
-                validator: (value){
-                  if(value.isEmpty){
-                    return 'Không được để trống';
-                  } else {
-                    return null;
-                  }
-                },
-                onSaved: (value){
-                  address = value;
-                },
-                onChanged: (value){
-                  address = value;
-                },
-                initialValue: value.address,
-              ),
-            ),
-          ],
-        ),
-      ),);
-      widgets.add(Expanded(
-        child: Container(
-          width: 300.0,
-          height: 40.0,
-          margin: EdgeInsets.only(top: 8.0),
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          ),
-          child: FlatButton(
-            color: Colors.blueAccent,
-            child: Text('Save Information',
-              style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.black),
-            ),
-            onPressed: (){
-              if(!_globalKey.currentState.validate()) {
-                print('error');
+            validator: (value){
+              if(value.isEmpty){
+                return 'Không được để trống';
               } else {
-                _globalKey.currentState.save();
-                print(name +' '+ birth +' '+ address +' '+ pass);
-                Navigator.of(context).pop(new User(name,birth,address,pass));
+                return null;
               }
             },
+            onSaved: (value){
+              name = value;
+            },
+            onChanged: (value){
+              name = value;
+            },
+            initialValue: value.name,
           ),
+        )
+    );
+    widgets.add(
+        detailUser(
+          Text('Birth Day : '),
+          TextFormField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              errorBorder: InputBorder.none,
+            ),
+            validator: (value){
+              if(value.isEmpty){
+                return 'Không được để trống';
+              } else {
+                return null;
+              }
+            },
+            onSaved: (value){
+              birth = value;
+            },
+            onChanged: (value){
+              birth = value;
+            },
+            initialValue: value.birth,
+          )),
+    );
+    widgets.add(
+      detailUser(
+          Text('Address : '),
+          TextFormField(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            errorBorder: InputBorder.none,
+          ),
+          validator: (value){
+            if(value.isEmpty){
+              return 'Không được để trống';
+            } else {
+              return null;
+            }
+          },
+          onSaved: (value){
+            address = value;
+          },
+          onChanged: (value){
+            address = value;
+          },
+          initialValue: value.address,
+        ),),
+    );
+    widgets.add(Expanded(
+      child: Container(
+        width: 300.0,
+        height: 40.0,
+        margin: EdgeInsets.only(top: 8.0),
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
-      ),);
-    });
-    userLogin.getUserLogin.forEach((value){
-      name = value.name;
-      birth = value.birth;
-      address = value.address;
-      pass = value.pass;
-    });
+        child: FlatButton(
+          color: Colors.blueAccent,
+          child: Text('Save Information',
+            style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.black),
+          ),
+          onPressed: (){
+            if(!_globalKey.currentState.validate()) {
+              print('error');
+            } else {
+              _globalKey.currentState.save();
+              print(name +' '+ birth +' '+ address +' '+ pass);
+              userBloc.updateCurrentUser(User(name, birth, address, pass));
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ),
+    ),);
+
+    name = value.name;
+    birth = value.birth;
+    address = value.address;
+    pass = value.pass;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Form'),

@@ -11,5 +11,4 @@ class UserLogin extends ChangeNotifier{
     _userLogin.add(user);
     notifyListeners();
   }
-
 }
