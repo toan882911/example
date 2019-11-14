@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test_textfield/navigation/module/data.dart';
 import 'package:flutter_test_textfield/navigation/module/page_indicator.dart';
 import 'package:gradient_text/gradient_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
+import 'login.dart';
 
 class OnBoardingDemo extends StatefulWidget {
+  OnBoardingDemo({this.prefs});
+  SharedPreferences prefs;
   @override
   _OnBoardingDemoState createState() => _OnBoardingDemoState();
 }
@@ -147,8 +151,12 @@ class _OnBoardingDemoState extends State<OnBoardingDemo> with TickerProviderStat
               bottom: 20.0,
               child: lastPage ? FloatingActionButton(
                 onPressed: (){
+                  widget.prefs.setBool('onboard', true);
+                  print(widget.prefs.getBool('onboard'));
                   Navigator.pushReplacement(context,MaterialPageRoute(
-                      builder: (BuildContext context) => Home()
+                      builder: (BuildContext context) {
+                        return MyHomePage(prefs: widget.prefs);
+                      }
                   ));
                 },
                 backgroundColor: Colors.white,

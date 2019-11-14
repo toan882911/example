@@ -1,23 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Login extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.deepPurple[900],
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
+import 'home.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title ,this.prefs}) : super(key: key);
   final String title;
+  SharedPreferences prefs;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -127,7 +116,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     FlatButton(
                       onPressed: (){
-
+                        widget.prefs.setBool('login', true);
+                        Navigator.of(context).push(MaterialPageRoute( builder: (context){
+                          return Home();
+                        }));
                       },
                       child: Container(
                         alignment: Alignment.center,

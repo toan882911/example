@@ -252,7 +252,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           if (error.isEmpty) {
                             _keyForm.currentState.save();
                             checkLogin(context);
-                            //TODO: Request API
                           } else {
                             setState((){});
                           }
