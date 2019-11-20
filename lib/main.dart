@@ -23,54 +23,54 @@ import 'login/home.dart';
 import 'login/login.dart';
 import 'navigation/shared_preferences.dart';
 import 'provider/demo_provider.dart';
+import 'task/home.dart';
+
 const BASE_URL = 'https://apioffice.sunshinegroup.vn';
 const BASE_URL_AUTH = 'https://api.sunshinegroup.vn:5000';
 
 void main() async {
-  SharedPreferences.getInstance().then((prefs){
-    runApp(Login());
-  });
-
+  runApp(MaterialApp(
+    theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        scaffoldBackgroundColor: Colors.white,),
+    home: HomeTask(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  Dio dio;
-  Dio dioAuth;
-  final SharedPreferences prefs;
-  void _configAuthApiService() async{
-    dioAuth = Dio(BaseOptions(baseUrl: BASE_URL_AUTH));
-    (dioAuth.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient client){
-      client.badCertificateCallback = (X509Certificate cert , String host , int port ) => true;
-      return client;
-    };
-    dioAuth.interceptors.add(InterceptorsWrapper(
-      onRequest: (requestOptions){
-        requestOptions.headers['Authorization'] =
-        'Basic bW9iaWxlX3N1bnNoaW5lX2luc2lkZV9wcm9kOnZ0Yzg0UkdDRWpKbnlUZVpUY0FEa1RKS3c=';
-      }
-    ));
-    dioAuth.interceptors.add(InterceptorsWrapper(
-      onRequest: (requestOption){
-        developer.log(requestOption.path);
-        if(requestOption.data != null){
-          developer.log('${requestOption.data}');
-        }
-      },
-      onResponse: (response){
-        developer.log('${response.data}');
-        print('${response.data}');
-      }
-    ));
-    dioAuth.interceptors.add(LogInterceptor());
-  }
-  MyApp({this.prefs}){
-    _configAuthApiService();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-
+//class MyApp extends StatelessWidget {
+//  Dio dio;
+//  Dio dioAuth;
+//  final SharedPreferences prefs;
+//  void _configAuthApiService() async {
+//    dioAuth = Dio(BaseOptions(baseUrl: BASE_URL_AUTH));
+//    (dioAuth.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+//        (HttpClient client) {
+//      client.badCertificateCallback =
+//          (X509Certificate cert, String host, int port) => true;
+//      return client;
+//    };
+//    dioAuth.interceptors.add(InterceptorsWrapper(onRequest: (requestOptions) {
+//      requestOptions.headers['Authorization'] =
+//          'Basic bW9iaWxlX3N1bnNoaW5lX2luc2lkZV9wcm9kOnZ0Yzg0UkdDRWpKbnlUZVpUY0FEa1RKS3c=';
+//    }));
+//    dioAuth.interceptors.add(InterceptorsWrapper(onRequest: (requestOption) {
+//      developer.log(requestOption.path);
+//      if (requestOption.data != null) {
+//        developer.log('${requestOption.data}');
+//      }
+//    }, onResponse: (response) {
+//      developer.log('${response.data}');
+//      print('${response.data}');
+//    }));
+//    dioAuth.interceptors.add(LogInterceptor());
+//  }
+//
+//  MyApp({this.prefs}) {
+//    _configAuthApiService();
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return Container();
+//  }
+//}
