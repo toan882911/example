@@ -49,7 +49,7 @@ class _HomeTaskState extends State<HomeTask> with SingleTickerProviderStateMixin
                               child: InkWell(
                                 onTap: (){
                                   Navigator.of(context).push<DepartmentModel>(MaterialPageRoute(builder: (context){
-                                    return DepartmentSearchWidget(department);
+                                  return DepartmentSearchWidget(department);
                                   })).then((value){
                                     if (value != null) {
                                       setState(() {
@@ -159,9 +159,9 @@ class _HomeTaskState extends State<HomeTask> with SingleTickerProviderStateMixin
         controller: controller,
         children: <Widget>[
           MyTask(department),
-          TaskWidget(),
-          InterestedWidget(),
-          PeopleWidget(),
+          TaskWidget(department),
+          InterestedWidget(department),
+          PeopleWidget(department),
           Container(),
           Container(),
         ],

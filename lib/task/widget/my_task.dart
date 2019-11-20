@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_textfield/task/data/model/department_model.dart';
 import 'package:flutter_test_textfield/task/data/model/task_model.dart';
-
-import 'list_item.dart';
 import 'task_item_widget.dart';
-import 'view_list_item.dart';
 
 class MyTask extends StatefulWidget {
 
@@ -30,8 +27,6 @@ class _MyTaskState extends State<MyTask> with AutomaticKeepAliveClientMixin{
   @override
   void didUpdateWidget(MyTask oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('MyTask didUpdateWidget ${widget.currentDep.title} - ${oldWidget.currentDep.title}');
-    print('MyTask didUpdateWidget ${widget.currentDep.title != oldWidget.currentDep.title}');
     if (widget.currentDep.title != oldWidget.currentDep.title) {
       print('MyTask Refresh Data');
       setState(() {
@@ -54,7 +49,7 @@ class _MyTaskState extends State<MyTask> with AutomaticKeepAliveClientMixin{
     return Scaffold(
       body: ListView.builder(
         itemCount: data.length,
-        itemBuilder: (context ,index ) => TaskItemWidget(data[index]),
+        itemBuilder: (context ,index ) => TaskItemWidget(data[index],0),
     ));
   }
 
