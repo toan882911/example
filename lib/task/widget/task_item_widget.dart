@@ -4,8 +4,7 @@ import 'package:flutter_test_textfield/task/data/model/task_model.dart';
 class TaskItemWidget extends StatefulWidget {
 
   final TaskModel model;
-  final int number;
-  TaskItemWidget(this.model,this.number);
+  TaskItemWidget(this.model);
 
   @override
   _TaskItemWidgetState createState() => _TaskItemWidgetState();
@@ -59,56 +58,56 @@ class _TaskItemWidgetState extends State<TaskItemWidget> {
                   bottom: BorderSide(width: 0.5,color: Colors.grey[400])
               )
           ),
-          child: Row(
-            children: <Widget>[
-              Flexible(
-                flex: 3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      children: containerItem(),
-                    ),
-                    SizedBox(
-                      height: 4.0,
-                    ),
-                    Text('${widget.model.title}'),
-                    SizedBox(
-                      height: 4.0,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 100,
-                          height: 24.0,
-                          decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.all(Radius.circular(4.0))
+          child: IntrinsicHeight(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        children: containerItem(),
+                      ),
+                      SizedBox(
+                        height: 4.0,
+                      ),
+                      Text('${widget.model.title}'),
+                      SizedBox(
+                        height: 4.0,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            width: 100,
+                            height: 24.0,
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))
+                            ),
+                            child: Center(
+                              child: Text('${widget.model.date}',style: TextStyle(color: Colors.white),),
+                            ),
                           ),
-                          child: Center(
-                            child: Text('${widget.model.date}',style: TextStyle(color: Colors.white),),
+                          SizedBox(
+                            width: 12.0,
                           ),
-                        ),
-                        SizedBox(
-                          width: 12.0,
-                        ),
-                        Icon(Icons.attach_file),
-                        Text('${widget.model.file}'),
-                      ],
-                    )
-                  ],
+                          Icon(Icons.attach_file),
+                          Text('${widget.model.file}'),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Column(
+                Column(
                   mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Container(
                       height: 30.0,
+                      padding: EdgeInsets.symmetric(horizontal: 4.0),
                       decoration: BoxDecoration(
                           color: Colors.green,
                           borderRadius: BorderRadius.all(Radius.circular(4.0))
@@ -117,29 +116,19 @@ class _TaskItemWidgetState extends State<TaskItemWidget> {
                         child: Text('${widget.model.status}',style: TextStyle(color: Colors.white),),
                       ),
                     ),
+                    SizedBox(
+                      height: 4.0,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: iconItem(),
                     ),
                   ],
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
-        widget.number > 0 ?
-        Container(
-          height: 40.0,
-          margin: EdgeInsets.symmetric(horizontal: 12.0,vertical: 4.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(width: 0.5,color: Colors.grey[400]),
-            borderRadius: BorderRadius.all(Radius.circular(4.0)),
-          ),
-          child: Center(
-            child: Text('Xem thêm'),
-          ),
-        ) : Container() ,
       ],
     );
   }

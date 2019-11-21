@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_textfield/task/constrain.dart';
+import 'package:flutter_test_textfield/task/data/model/activity_model.dart';
+import 'package:flutter_test_textfield/task/widget/activity_widget.dart';
 import 'package:flutter_test_textfield/task/widget/my_task.dart';
 
 import 'data/model/department_model.dart';
@@ -16,6 +18,8 @@ class HomeTask extends StatefulWidget {
 class _HomeTaskState extends State<HomeTask> with SingleTickerProviderStateMixin{
 
   DepartmentModel department = DepartmentModel('Ban Lãnh Đạo', false);
+
+  ActivityModel activity;
 
   TabController controller;
 
@@ -163,7 +167,7 @@ class _HomeTaskState extends State<HomeTask> with SingleTickerProviderStateMixin
           InterestedWidget(department),
           PeopleWidget(department),
           Container(),
-          Container(),
+          ActivityWidget(activity),
         ],
       ),
       floatingActionButton: FloatingActionButton(

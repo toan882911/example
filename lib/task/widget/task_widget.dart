@@ -36,7 +36,7 @@ class _TaskWidgetState extends State<TaskWidget> {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: data.length,
-      itemBuilder: (context ,index ) => TaskItemWidget(data[index],0),
+      itemBuilder: (context ,index ) => TaskItemWidget(data[index]),
     );
   }
 }

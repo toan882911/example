@@ -1,9 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test_textfield/task/data/model/department_model.dart';
-
 import '../constrain.dart';
-import 'list_item_search.dart';
 import 'view_list_item_search.dart';
 
 class DepartmentSearchWidget extends StatefulWidget {

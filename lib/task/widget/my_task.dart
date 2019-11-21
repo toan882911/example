@@ -49,7 +49,7 @@ class _MyTaskState extends State<MyTask> with AutomaticKeepAliveClientMixin{
     return Scaffold(
       body: ListView.builder(
         itemCount: data.length,
-        itemBuilder: (context ,index ) => TaskItemWidget(data[index],0),
+        itemBuilder: (context ,index ) => TaskItemWidget(data[index]),
     ));
   }
 
